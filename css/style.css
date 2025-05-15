@@ -1,0 +1,71 @@
+html,
+body {
+  overflow-x: hidden;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.content {
+  flex: 1;
+}
+.footer {
+  width: 100vw;
+  background-color: #343a40;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-top: auto; /* Dit zorgt ervoor dat de footer onderaan komt */
+}
+
+button a {
+  text-decoration: none;
+  color: white;
+}
+
+button a:hover {
+  color: black;
+}
+
+.fixed-height-img {
+  height: 360px;
+  object-fit: cover;
+}
+
+.volgende-wedstrijd,
+.card {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .update-text {
+    content: "Volg ons:";
+  }
+
+  .instagram-btn {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+  }
+
+  .instagram-btn span {
+    display: none; /* Verberg de tekst */
+  }
+}
