@@ -59,9 +59,6 @@ session_start();
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Reset Wachtwoord</button>
                         </form>
-                        <div class="mt-3 text-left">
-                            <p class="fs-7 text-muted">* Het is mogelijk dat de e-mail niet altijd verstuurd wordt of dat het een tijdje duurt. We proberen dit zo snel mogelijk op te lossen. Indien het langer dan 1 uur duurt, gelieve ons te contacteren: <a href="mailto:studaxzwevegem.robberollez.be">studaxzwevegem.robberollez.be</a></p>
-                        </div>
                         <div class="mt-3 text-center">
                             <a href="../../login/login.php">Terug naar login</a>
                         </div>

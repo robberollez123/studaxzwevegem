@@ -97,7 +97,20 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     </footer>
 
     <!-- Bootstrap JS -->
-    <script src="../../scripts/login.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+        $("#login").click(function () {
+            window.location.href = "../../login/login.php";
+        });
+
+        $("#register").click(function () {
+            window.location.href = "../../login/register.php";
+        });
+
+        $("#logout").click(function () {
+            window.location.href = "../../login/logout.php";
+        });
+        });
+    </script>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

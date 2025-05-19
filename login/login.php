@@ -6,6 +6,41 @@ if (isset($_SESSION['user'])) {
     header("Location: ../index.php");
     exit;
 }
+
+// Als er een remember-me cookie is, probeer automatisch in te loggen
+if (!isset($_SESSION['user']) && isset($_COOKIE['rememberme'])) {
+    list($selector, $validator) = explode(':', $_COOKIE['rememberme']);
+
+    require_once __DIR__ . '/../config/database.php';
+    $stmt = mysqli_prepare(
+        $linkDB,
+        "SELECT user_id, token, expires_at 
+           FROM auth_tokens 
+          WHERE selector = ?"
+    );
+    mysqli_stmt_bind_param($stmt, 's', $selector);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_bind_result($stmt, $userId, $dbToken, $expiresAt);
+    if (mysqli_stmt_fetch($stmt)) {
+        if (new DateTime() < new DateTime($expiresAt) &&
+            hash_equals($dbToken, hash('sha256', base64_decode($validator)))
+        ) {
+            // Login succesvol via cookie
+            $stmt->close();
+            $stmt = mysqli_prepare($linkDB, "SELECT naam FROM gebruikers WHERE id = ?");
+            mysqli_stmt_bind_param($stmt, 'i', $userId);
+            mysqli_stmt_execute($stmt);
+            mysqli_stmt_bind_result($stmt, $userName);
+            mysqli_stmt_fetch($stmt);
+            $_SESSION['user'] = $userName;
+            header("Location: ../index.php");
+            exit;
+        }
+    }
+    mysqli_stmt_close($stmt);
+    // Ongeldige cookie: verwijderen
+    setcookie('rememberme', '', time() - 3600, '/');
+}
 ?>
 
 <!DOCTYPE html>
@@ -44,13 +79,41 @@ if (isset($_SESSION['user'])) {
                     <div class="card-body">
                         <h3 class="text-center mb-4">Inloggen</h3>
 
-                        <!-- Foutmelding tonen als er een 'error' parameter in de URL zit -->
-                        <?php if (isset($_GET['error'])): ?>
-                            <div class="alert alert-danger">
-                                <?php echo htmlspecialchars($_GET['error']); ?>
-                            </div>
-                        <?php endif; ?>
+                        <?php
+                        // login.php (fragment bovenaan, vóór je <form>)
+                        // ============================================
 
+                        if (isset($_GET['error'])) {
+                            $error = $_GET['error'];
+                            $email = isset($_GET['email']) ? htmlspecialchars($_GET['email'], ENT_QUOTES) : '';
+
+                            // Zet de error‐code om naar een vriendelijke, Nederlandse tekst
+                            if ($error === 'empty_fields') {
+                                $msg = "Vul zowel je gebruikersnaam als wachtwoord in.";
+                            }
+                            elseif ($error === 'not_found') {
+                                $msg = "De opgegeven gebruikersnaam bestaat niet. Controleer je invoer.";
+                            }
+                            elseif ($error === 'wrong_password') {
+                                $msg = "Het ingevulde wachtwoord is onjuist. Probeer het opnieuw.";
+                            }
+                            elseif ($error === 'not_verified') {
+                                // Bij een nog niet geverifieerd account bieden we een link om de mail opnieuw te sturen
+                                $resendLink = "resend_verification.php?email=" . urlencode($email);
+                                $msg = "Je account is nog niet geverifieerd. Controleer je e‑mail voor de verificatielink. "
+                                    . "Heb je de e‑mail niet ontvangen? "
+                                    . "<a href=\"{$resendLink}\">Klik hier om de verificatiemail opnieuw te sturen</a>.";
+                            }
+                            else {
+                                // Algemene fallback‐melding
+                                $msg = "Er is iets misgegaan. Probeer het nogmaals.";
+                            }
+
+                            echo '<div class="alert alert-danger" role="alert" style="word-wrap: break-word;">'
+                                . $msg .
+                                '</div>';
+                        }
+                        ?>
                         <form action="login_backend.php" method="POST">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Gebruikersnaam</label>
@@ -60,10 +123,10 @@ if (isset($_SESSION['user'])) {
                                 <label for="password" class="form-label">Wachtwoord</label>
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Voer je wachtwoord in" required>
                             </div>
-                            <!-- <div class="mb-3 form-check">
+                            <div class="mb-3 form-check">
                                 <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
                                 <label class="form-check-label" for="rememberMe">Onthoud mij</label>
-                            </div> -->
+                            </div>
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-primary">Inloggen</button>
                             </div>

@@ -16,6 +16,7 @@ $userEmail = $_SESSION['email'] ?? '';
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
     rel="stylesheet"
   >
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>    
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     rel="stylesheet"
@@ -142,9 +143,9 @@ $userEmail = $_SESSION['email'] ?? '';
 
 
 
-  <footer class="footer bg-dark text-white py-3">
-    <div class="container text-center">
-      <p class="mb-0">&copy; 2025 Studax Zwevegem. Alle rechten voorbehouden.</p>
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Studax Zwevegem. Alle rechten voorbehouden.</p>
     </div>
   </footer>
 
